@@ -56,6 +56,8 @@ export function MenuPerfil({ navigation }: NavigationProps) {
       >EdicaoUsuario</Button>
       <Button
         width="full"
+        variant="solid"
+        colorScheme="danger"
         onPress={() => {
           navigation.navigate("Login");
         }}

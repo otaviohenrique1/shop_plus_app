@@ -88,7 +88,7 @@ export function AppStackRoutesPerfil() {
   const Stack = createStackNavigator<RootStackPerfilParamList>();
 
   return (
-    <Stack.Navigator initialRouteName="MenuPerfil">
+    <Stack.Navigator initialRouteName="NovoUsuario">
       <Stack.Screen
         name="Login"
         component={Login}
