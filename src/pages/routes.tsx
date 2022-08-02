@@ -13,6 +13,7 @@ import { Perfil } from './Perfil';
 import { MaterialIcons } from "@expo/vector-icons";
 import { RecuperarSenha } from './RecuperarSenha';
 import { DadosUsuario } from './DadosUsuario';
+import { NovaSenha } from './NovaSenha';
 
 export type RootBottomTabParamList = {
   Home: undefined;
@@ -76,6 +77,7 @@ export function AppTabRoutes() {
 export type RootStackPerfilParamList = {
   Login: undefined;
   RecuperarSenha: undefined;
+  NovaSenha: undefined;
   NovoUsuario: undefined;
   MenuPerfil: undefined;
   Favoritos: undefined;
@@ -88,7 +90,7 @@ export function AppStackRoutesPerfil() {
   const Stack = createStackNavigator<RootStackPerfilParamList>();
 
   return (
-    <Stack.Navigator initialRouteName="NovoUsuario">
+    <Stack.Navigator initialRouteName="NovaSenha">
       <Stack.Screen
         name="Login"
         component={Login}
@@ -103,6 +105,11 @@ export function AppStackRoutesPerfil() {
         name="NovoUsuario"
         component={NovoUsuario}
         options={{ title: "Novo usuário" }}
+      />
+      <Stack.Screen
+        name="NovaSenha"
+        component={NovaSenha}
+        options={{ title: "Nova senha" }}
       />
       <Stack.Screen
         name="DadosUsuario"

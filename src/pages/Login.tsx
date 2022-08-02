@@ -49,7 +49,7 @@ export function Login({ navigation }: NavigationProps) {
           placeholder="Senha"
           keyboardType="default"
           variant="underlined"
-          secureTextEntry
+          secureTextEntry={show}
         />
         <Link
           _text={{

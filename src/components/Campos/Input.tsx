@@ -1,10 +1,8 @@
 import { IInputProps, Input as NativeBaseInput } from "native-base";
 
-type CampoInputProps = IInputProps & {
-  label: string;
-}
+export type InputProps = IInputProps;
 
-export function CampoInput(props: CampoInputProps) {
+export function Input(props: InputProps) {
   return (
     <NativeBaseInput {...props} />
   );
