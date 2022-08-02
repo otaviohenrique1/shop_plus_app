@@ -7,6 +7,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useState } from "react";
 
+interface CamposFormularioTypes {
+  isInvalid: boolean;
+  name: "senha" | "confirmar_senha";
+  placeholder: string;
+  inputLeftElement: JSX.Element;
+  inputRightElement: JSX.Element;
+  secureTextEntry: boolean;
+  errors: string | undefined;
+}
+
 type NavigationProps = {
   navigation: NativeStackNavigationProp<RootStackPerfilParamList>;
 }
@@ -21,10 +31,46 @@ export function NovaSenha({ navigation }: NavigationProps) {
   });
 
   function onSubmit(values: FieldValues) {
-    console.log(values.email);
+    alert(values.senha);
 
     // navigation.navigate("MenuPerfil");
   }
+
+  const icone_cadeado = <Icon
+    as={<MaterialIcons name="lock" />}
+    size={5} marginRight="2" color="muted.400"
+  />;
+
+  const icone_exibe_senha1 = <Icon
+    as={<MaterialIcons name={showSenha1 ? "visibility" : "visibility-off"} />}
+    size={5} mr="2" color="muted.400" onPress={() => setShowSenha1(!showSenha1)}
+  />;
+
+  const icone_exibe_senha2 = <Icon
+    as={<MaterialIcons name={showSenha2 ? "visibility" : "visibility-off"} />}
+    size={5} mr="2" color="muted.400" onPress={() => setShowSenha2(!showSenha2)}
+  />;
+
+  const campos_formulario: CamposFormularioTypes[] = [
+    {
+      isInvalid: "senha" in errors,
+      name: "senha",
+      placeholder: "Nova senha",
+      inputLeftElement: icone_cadeado,
+      inputRightElement: icone_exibe_senha1,
+      secureTextEntry: !showSenha1,
+      errors: errors.senha?.message
+    },
+    {
+      isInvalid: "confirmar_senha" in errors,
+      name: "confirmar_senha",
+      placeholder: "Confirmar senha",
+      inputLeftElement: icone_cadeado,
+      inputRightElement: icone_exibe_senha2,
+      secureTextEntry: !showSenha2,
+      errors: errors.confirmar_senha?.message
+    },
+  ];
 
   return (
     <VStack
@@ -36,72 +82,36 @@ export function NovaSenha({ navigation }: NavigationProps) {
       <Heading fontSize="2xl" textAlign="center">
         Digite a nova senha
       </Heading>
-      <FormControl
-        isRequired
-        isInvalid={"senha" in errors}
-      >
-        <Controller
-          control={control}
-          name="senha"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              width="full"
-              placeholder="Nova senha"
-              variant="underlined"
-              type="text"
-              keyboardType="default"
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value}
-              InputLeftElement={<Icon
-                as={<MaterialIcons name="lock" />}
-                size={5} marginRight="2" color="muted.400"
-              />}
-              InputRightElement={<Icon
-                as={<MaterialIcons name={showSenha1 ? "visibility" : "visibility-off"} />}
-                size={5} mr="2" color="muted.400" onPress={() => setShowSenha1(!showSenha1)}
-              />}
-              secureTextEntry={!showSenha1}
-            />
-          )}
-        />
-        <FormControl.ErrorMessage>
-          {errors.senha?.message}
-        </FormControl.ErrorMessage>
-      </FormControl>
-      <FormControl
-        isRequired
-        isInvalid={"confirmar_senha" in errors}
-      >
-        <Controller
-          control={control}
-          name="confirmar_senha"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              width="full"
-              placeholder="Confirmar senha"
-              variant="underlined"
-              type="text"
-              keyboardType="default"
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value}
-              InputLeftElement={<Icon
-                as={<MaterialIcons name="lock" />}
-                size={5} marginRight="2" color="muted.400"
-              />}
-              InputRightElement={<Icon
-                as={<MaterialIcons name={showSenha2 ? "visibility" : "visibility-off"} />}
-                size={5} mr="2" color="muted.400" onPress={() => setShowSenha2(!showSenha2)}
-              />}
-              secureTextEntry={!showSenha2}
-            />
-          )}
-        />
-        <FormControl.ErrorMessage>
-          {errors.confirmar_senha?.message}
-        </FormControl.ErrorMessage>
-      </FormControl>
+      {campos_formulario.map((item, index) => (
+        <FormControl
+          isRequired
+          isInvalid={item.isInvalid}
+          key={index}
+        >
+          <Controller
+            control={control}
+            name={item.name}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                width="full"
+                placeholder={item.placeholder}
+                variant="underlined"
+                type="text"
+                keyboardType="default"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                InputLeftElement={item.inputLeftElement}
+                InputRightElement={item.inputRightElement}
+                secureTextEntry={item.secureTextEntry}
+              />
+            )}
+          />
+          <FormControl.ErrorMessage>
+            {item.errors}
+          </FormControl.ErrorMessage>
+        </FormControl>
+      ))}
       <Button
         width="full"
         variant="solid"
@@ -115,10 +125,14 @@ export function NovaSenha({ navigation }: NavigationProps) {
 const schemaValidacao = yup.object({
   senha: yup
     .string()
-    .required("Campo vazio"),
+    .required("Campo vazio")
+    .min(8, "Minimo de 8 caracteres")
+    .max(8, "Maximo de 32 caracteres"),
   confirmar_senha: yup
     .string()
     .required("Campo vazio")
+    .min(8, "Minimo de 8 caracteres")
+    .max(8, "Maximo de 32 caracteres")
     .test('passwords-match', "As senhas são diferentes", function (value) {
       return this.parent.senha === value
     }),
